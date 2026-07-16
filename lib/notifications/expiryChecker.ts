@@ -176,7 +176,23 @@ export function checkBatch(
   const status = classifyExpiry(daysUntilExpiry);
   if (status === "ok") return null;
 
-  if (hasExistingNotification(existingNotifications, batch.id, batch.expiryDate)) return null;
+  const duplicate = hasExistingNotification(
+  existingNotifications,
+  batch.id,
+  batch.expiryDate
+);
+
+console.log(
+  "[Expiry Checker]",
+  batch.batchNumber,
+  batch.expiryDate,
+  "Duplicate:",
+  duplicate
+);
+
+if (duplicate) {
+  return null;
+}
 
   const productName = productNameById.get(batch.productId) ?? "Unknown product";
   const { category, message } = buildExpiryMessage(batch, productName, status, daysUntilExpiry);
@@ -271,12 +287,14 @@ export async function runExpiryChecker(): Promise<ExpiryCheckSummary> {
       // throw (see lib/email/mailer.ts), so a failed send can't interrupt
       // this run — it only logs internally.
       if (result.status === "expired") {
-        await sendExpiredEmail({
-          productName: result.productName,
-          batchId: result.batchId,
-          expiryDate: batch.expiryDate,
-          daysExpired: Math.abs(result.daysUntilExpiry),
-        });
+        const emailResult = await sendExpiredEmail({
+  productName: result.productName,
+  batchId: result.batchId,
+  expiryDate: batch.expiryDate,
+  daysExpired: Math.abs(result.daysUntilExpiry),
+});
+
+console.log("Expired Email Result:", emailResult);
         // Push is likewise best-effort and synchronous/never-throwing (see
         // lib/push/pushService.ts) — safe to call unconditionally.
         sendExpiredPush({
