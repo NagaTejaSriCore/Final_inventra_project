@@ -15,6 +15,8 @@ import {
   ClipboardList,
   ArrowLeftRight,
   Sparkles,
+  CheckSquare,
+  Bell,
 } from "lucide-react";
 
 const ICONS = {
@@ -26,7 +28,9 @@ const ICONS = {
   "Purchase Request": ClipboardList,
   Transfer: ArrowLeftRight,
   "AI Recommendation": Sparkles,
-};
+  Task: CheckSquare,
+  "Leave Request": Bell,
+} as const;
 
 export function NotificationsView() {
   const [items, setItems] = useState<NotificationItem[]>([]);
@@ -79,7 +83,7 @@ export function NotificationsView() {
         {!loading && items.length === 0 && <p className="px-5 py-10 text-center text-xs text-muted">You're all caught up.</p>}
         {!loading &&
           items.map((n) => {
-            const Icon = ICONS[n.category];
+            const Icon = ICONS[n.category as keyof typeof ICONS] ?? Bell;;
             return (
               <button
                 key={n.id}
