@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 244 246 251;
+  --surface: 255 255 255;
+  --surface-2: 237 241 248;
+  --border: 223 229 240;
+  --text: 15 23 42;
+  --muted: 100 112 134;
+  --primary: 59 130 246;
+  --primary-fg: 255 255 255;
+}
+
+.dark {
+  --bg: 8 12 22;
+  --surface: 15 21 36;
+  --surface-2: 21 29 48;
+  --border: 32 42 64;
+  --text: 226 232 245;
+  --muted: 148 163 184;
+  --primary: 59 130 246;
+  --primary-fg: 255 255 255;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+::selection {
+  background-color: rgb(var(--primary) / 0.25);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 999px;
+}
+
+/* subtle grid texture used behind the KPI hero */
+.grid-texture {
+  background-image: radial-gradient(rgb(var(--border)) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
