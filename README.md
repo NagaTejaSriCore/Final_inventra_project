@@ -1,109 +1,100 @@
-# Inventra — Administrator Dashboard
+# Inventra – My Modules (Team Project)
 
-A real Next.js 14 (App Router) + TypeScript + Tailwind codebase for the
-Administrator role of Inventra, an AI-powered product & inventory
-management platform. All data is realistic mock data in `lib/mock-data.ts`
-— there's no backend yet, so every table/form edits in-memory state only
-(refreshing resets it).
+Inventra is an AI-powered inventory management system built by a team at a hackathon. This repository contains the modules I built: expiry checking, low-stock detection with email notifications, and the landing page.
 
-## Run it
+- **My repository:** https://github.com/NagaTejaSriCore/Final_inventra_project
+- **Team repository:** https://github.com/hasinipabba/Inventra
+
+## 1. Problem Statement
+
+Stores lose money when products expire before they are sold or run out of stock without warning. Checking inventory by hand makes these problems easy to miss.
+
+Inventra monitors stock levels and expiry dates automatically and sends alerts, so store owners can act in time.
+
+## 2. Flowchart
+
+```text
+        Scheduled Cron Trigger
+                  |
+                  v
+       Protected Cron Endpoint
+                  |
+                  v
+          PostgreSQL Database
+                  |
+          +-------+-------+
+          |               |
+          v               v
+    Expiry Checker   Low-Stock Checker
+          |               |
+          v               v
+     Expiry Alerts    Stock Alerts
+          |               |
+          +-------+-------+
+                  |
+                  v
+            Notifications
+                  |
+                  v
+      Email (Nodemailer / SMTP)
+```
+
+## 3. My Contributions
+
+### Expiry Checker
+- Checks product batches against their expiry dates.
+- Flags expired and soon-to-expire products.
+- Creates alerts so stock can be used or removed before it is wasted.
+
+### Low-Stock Detection and Email Notifications
+- Compares current stock with each product's minimum stock level.
+- Detects low-stock and out-of-stock products.
+- Sends automated email notifications through Nodemailer.
+
+### Landing Page
+- Built the landing page with React and Tailwind CSS.
+- Responsive layout with a Get Started button that leads to the login page.
+
+## 4. Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| React.js | Frontend |
+| TypeScript | Type-safe application code |
+| Tailwind CSS | Styling |
+| Node.js | Backend and API handling |
+| PostgreSQL | Inventory data storage |
+| Nodemailer | Email notifications |
+| Groq API | AI inventory recommendation feature|
+
+## 5. Run Locally
+
+**Prerequisites:** Node.js, npm, Git, and a PostgreSQL database.
 
 ```bash
+git clone https://github.com/NagaTejaSriCore/Final_inventra_project.git
+cd Final_inventra_project
 npm install
+```
+
+Create the environment file (see `.env.example` for the exact variable names). It needs:
+
+- the PostgreSQL connection string
+- `CRON_SECRET`
+- the SMTP settings for Nodemailer
+- the Groq API key (only for the team's recommendation feature)
+
+Then start the app:
+
+```bash
 npm run dev
 ```
 
-Open http://localhost:3000 — it redirects to `/dashboard`.
+Never commit real API keys, database credentials, email passwords or cron secrets to GitHub.
 
-For a production build:
+## 6. What I Learned
 
-```bash
-npm run build
-npm start
-```
-
-> Note: the build fetches Inter, Space Grotesk, and JetBrains Mono from
-> Google Fonts at build time via `next/font/google`. This requires normal
-> internet access (it fails in network-locked sandboxes, which is expected).
-
-## What's included
-
-- **Dashboard Overview** — KPI cards, inventory health trend, category
-  donut, recent products, AI insight preview
-- **Product Management** — searchable/filterable table, add/edit modal,
-  delete, AI Health Score ring, status pills (Healthy / Low / Out /
-  Expiring / Expired)
-- **Category Management** — category cards with stock share, create/delete
-- **Warehouse Management** — capacity cards, transfer counts, a heat map
-- **Supplier Management** — reliability scores, status, contact info
-- **User Management** — role-based user table (Administrator / Inventory
-  Manager / Warehouse Staff), invite modal
-- **Inventory Analytics** — health trend, category share, warehouse
-  utilization, product movement, expiry timeline (Recharts)
-- **Procurement** — purchase requests with approve/reject actions
-- **Reports** — generate/preview Inventory, Expiry, Warehouse, and
-  Procurement summaries
-- **AI Insights** — restock, transfer, expiry, slow-moving, and excess
-  inventory recommendations as premium cards
-- **Notifications** — categorized real-time-style alert feed, mark as read
-- **Settings** — company profile, notification preferences, a
-  role-permission matrix, integrations placeholder
-- **Floating AI Assistant** — answers the seven example questions from the
-  brief (restocking, expired products, low-inventory warehouse, expiring
-  this week, slow movers, today's report, transfer recommendations) using
-  the same mock data as the rest of the app
-- **Dark / light mode** — toggle in the top bar, persisted to
-  `localStorage`
-
-## Design system
-
-- **Palette**: signal blue primary (`#3F5BF6`) on a near-white / near-black
-  neutral base, plus a 5-state status system (Healthy `#16A34A`, Low
-  `#F5A524`, Out `#DC2626`, Expiring `#FB7D3B`, Expired `#6B7280`) used
-  consistently across pills, charts, and the heat map.
-- **Type**: Space Grotesk for headings, Inter for UI/body text, JetBrains
-  Mono for SKUs, barcodes, and batch numbers — so identifiers always read
-  as data, not prose.
-- **Signature element**: the AI Health Score ring — a small circular gauge
-  next to every product that recolors along the same status scale.
-
-## Project structure
-
-```
-app/
-  layout.tsx              root layout, fonts, globals.css
-  page.tsx                redirects to /dashboard
-  (admin)/
-    layout.tsx             sidebar + topbar + floating AI assistant shell
-    dashboard/page.tsx
-    products/page.tsx
-    categories/page.tsx
-    warehouses/page.tsx
-    suppliers/page.tsx
-    users/page.tsx
-    analytics/page.tsx
-    procurement/page.tsx
-    reports/page.tsx
-    ai-insights/page.tsx
-    notifications/page.tsx
-    settings/page.tsx
-components/
-  sidebar.tsx, topbar.tsx, theme-toggle.tsx, ai-assistant.tsx
-  ui/            card, button, status-pill, health-ring, ai-insight-card
-  charts/        recharts wrappers (health trend, donut, bars, timeline, movement)
-  products/, categories/, warehouses/, suppliers/, users/, procurement/, reports/, settings/
-lib/
-  types.ts        shared TypeScript interfaces
-  mock-data.ts    all seed data (products, warehouses, suppliers, users, AI insights…)
-  utils.ts        cn(), date formatting
-```
-
-## Next steps (not built yet)
-
-- Real auth (email/password + Google OAuth), the marketing landing page,
-  and the Inventory Manager / Warehouse Staff dashboards were intentionally
-  left out of this pass — say the word and I'll build any of those next.
-- Swap `lib/mock-data.ts` for real API calls / a database once a backend
-  exists; the components are already written against the `Product`,
-  `Warehouse`, etc. types in `lib/types.ts`, so the swap is mostly in the
-  data layer.
+- Writing the checks that compare expiry dates and stock levels against the database.
+- Protecting a scheduled endpoint with a secret.
+- Sending automated emails and avoiding repeated alerts
+- Working in a team using Git and GitHub.
